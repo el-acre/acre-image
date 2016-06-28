@@ -64,7 +64,7 @@ Example:
         <iron-image class="flex image secondary"
             sizing="[[sizing]]"
             preload
-            src="[[srcSecondary]]"></iron-image>
+            src="[[_srcSecondary]]"></iron-image>
       </div>
     </a>
   </template>
@@ -77,18 +77,37 @@ Example:
         /**
          * `image-src` The main image source
          */
-        src: String,
+        src: {
+          type: String,
+          notify: true
+        },
 
         /**
          * `image-src` The secondary image source, shown when hover
          */
-        srcSecondary: String,
+        srcSecondary: {
+          type: String,
+          notify: true
+        },
 
-        sizing:{
+        sizing: {
           type: String,
           value: 'contain'
         },
 
+      },
+
+      observers: [
+        '_computeSecondarySrc(src)',
+        '_computeSecondarySrc(srcSecondary)',
+      ],
+
+      _computeSecondarySrc: function(src) {
+        if (this.srcSecondary)
+          this._srcSecondary = this.srcSecondary;
+        else {
+          this._srcSecondary = this.src;
+        }
       },
 
       // Element Lifecycle
@@ -120,35 +139,6 @@ Example:
 
       // Element Behavior
 
-      /**
-       * Sometimes it's just nice to say hi.
-       *
-       * @param {string} greeting A positive greeting.
-       * @return {string} The full greeting.
-       */
-      sayHello: function(greeting) {
-        var response = greeting || 'Hello World!';
-        return 'acre-image says, ' + response;
-      },
-
-      /**
-       * The `acre-image-lasers` event is fired whenever `fireLasers` is called.
-       *
-       * @event acre-image-lasers
-       * @detail {{sound: String}}
-       */
-
-      /**
-       * Attempt to destroy this element's enemies with a beam of light!
-       *
-       * Or, at least, dispatch an event in the vain hope that someone else will
-       * do the zapping.
-       */
-      fireLasers: function() {
-        this.fire('acre-image-lasers', {
-          sound: 'Pew pew!'
-        });
-      }
     });
   </script>
 </dom-module>
