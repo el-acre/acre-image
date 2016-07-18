@@ -46,25 +46,29 @@ Example:
         display: none;
       }
 
-      .image-container:hover .image.primary {
+      .image-multiple:hover .image.primary {
         display: none;
       }
 
-      .image-container:hover .image.secondary {
+      .image-multiple:hover .image.secondary {
         display: inline-block;
       }
     </style>
 
     <a href="[[imageHref]]">
-      <div class="image-container">
+      <div class$="image-container {{_multiImageClass}}">
         <iron-image class="flex image primary"
             sizing="[[sizing]]"
             preload
             src="[[src]]"></iron-image>
-        <iron-image class="flex image secondary"
+            
+        <template is="dom-if" if="{{srcSecondary}}">    
+          <iron-image class="flex image secondary"
             sizing="[[sizing]]"
             preload
-            src="[[_srcSecondary]]"></iron-image>
+            src="[[srcSecondary]]">
+          </iron-image>
+        </template>
       </div>
     </a>
   </template>
@@ -87,7 +91,8 @@ Example:
          */
         srcSecondary: {
           type: String,
-          notify: true
+          notify: true,
+          value: ''
         },
 
         sizing: {
@@ -95,19 +100,11 @@ Example:
           value: 'contain'
         },
 
-      },
+        _multiImageClass:{
+          type: Boolean,
+          computed: '_computeMultiImageClass(srcSecondary)'
+        } 
 
-      observers: [
-        '_computeSecondarySrc(src)',
-        '_computeSecondarySrc(srcSecondary)',
-      ],
-
-      _computeSecondarySrc: function(src) {
-        if (this.srcSecondary)
-          this._srcSecondary = this.srcSecondary;
-        else {
-          this._srcSecondary = this.src;
-        }
       },
 
       // Element Lifecycle
@@ -138,6 +135,12 @@ Example:
       },
 
       // Element Behavior
+      _computeMultiImageClass: function(value){
+        if(value)
+          return 'image-multiple';
+        else
+          return '';
+      }
 
     });
   </script>
